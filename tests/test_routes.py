@@ -6,7 +6,7 @@ def test_index_shows_landing(client):
     response = client.get("/")
     assert response.status_code == 200
     assert b"Gratis beginnen" in response.data
-    assert b"Helder" in response.data
+    assert b"Fris" in response.data
 
 
 def test_privacy_and_partners_pages(client):

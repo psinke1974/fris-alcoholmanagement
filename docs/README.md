@@ -1,6 +1,6 @@
 # Documentatie
 
-Technische documentatie voor **fris-alcoholmanagement** (standaard app-naam: Helder).
+Technische documentatie voor **fris-alcoholmanagement** (app-naam: Fris).
 
 | Document | Beschrijving |
 |----------|-------------|

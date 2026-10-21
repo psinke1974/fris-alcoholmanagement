@@ -50,7 +50,7 @@ class Config:
     LOGIN_MAX_ATTEMPTS = int(os.environ.get("LOGIN_MAX_ATTEMPTS", "10"))
     LOGIN_WINDOW_SECONDS = int(os.environ.get("LOGIN_WINDOW_SECONDS", "900"))
 
-    SITE_NAME = os.environ.get("SITE_NAME", "Helder")
+    SITE_NAME = os.environ.get("SITE_NAME", "Fris")
     SITE_TAGLINE = os.environ.get(
         "SITE_TAGLINE",
         "Houd je alcoholgebruik bij en werk in je eigen tempo aan minderen of stoppen.",

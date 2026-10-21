@@ -2,7 +2,7 @@
 
 Een open source webapp voor mensen die hun alcoholgebruik willen bijhouden, minderen of stoppen. Je registreert per dag wat je drinkt (of dat je niets dronk), stelt een doel en ziet op je dashboard hoe het gaat, met tips, mijlpalen en een persoonlijk dagboek.
 
-De app heet standaard **Helder**; de naam is in te stellen met `SITE_NAME`.
+De app heet **Fris**; de naam is in te stellen met `SITE_NAME`.
 
 > ⚠️ Deze app is een hulpmiddel en vervangt geen medisch advies. Hulp nodig? Kijk op [alcoholinfo.nl](https://www.alcoholinfo.nl) of bel de Trimbos-hulplijn: 0900-1995.
 

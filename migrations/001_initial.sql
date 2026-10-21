@@ -1,4 +1,4 @@
--- Initial schema for Helder
+-- Initial schema for Fris
 -- SQLite database wordt automatisch aangemaakt via SQLAlchemy (db.create_all).
 -- Dit script dient als documentatie en handmatige migratie indien nodig.
 

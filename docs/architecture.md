@@ -2,7 +2,7 @@
 
 ## Overzicht
 
-Helder is een Flask-webapplicatie met een **lagenarchitectuur**:
+Fris is een Flask-webapplicatie met een **lagenarchitectuur**:
 
 ```
 Browser  →  Blueprints (routes)  →  Services  →  Models  →  SQLite

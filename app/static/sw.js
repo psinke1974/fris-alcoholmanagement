@@ -1,5 +1,5 @@
 /* Minimal service worker: cache shell assets for offline/open-from-home-screen. */
-const CACHE = "helder-v1";
+const CACHE = "fris-v1";
 const PRECACHE = [
   "/",
   "/static/css/style.css",

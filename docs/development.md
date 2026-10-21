@@ -78,7 +78,7 @@ Vaste waarden (formulieropties, validatielimieten) horen in `app/constants.py`.
 | `FLASK_DEBUG` | `1` via `run.py` | Debug-modus en reloader; nooit in productie |
 | `HOST`, `PORT` | `127.0.0.1`, `8080` | Adres van de development-server (`run.py`) |
 | `DATABASE_URL` | SQLite in `data/` | SQLAlchemy database-URL |
-| `SITE_NAME` | `Helder` | Productnaam in UI, e-mails en PWA |
+| `SITE_NAME` | `Fris` | Productnaam in UI, e-mails en PWA |
 | `SITE_TAGLINE` | (standaardtekst) | Ondertitel / meta-description |
 | `CONTACT_EMAIL` | `contact@example.org` | Contactadres in privacyverklaring en footer |
 | `WEBAUTHN_RP_ID` | `localhost` | Relying party ID voor passkeys |
