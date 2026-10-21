@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Doelen — {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Doelen</h1>
+</div>
+
+<div class="two-col">
+  <div class="card">
+    <h2>Nieuw doel instellen</h2>
+    <p class="subtitle">Onderzoek toont dat concrete, meetbare doelen het meest effectief zijn.</p>
+
+    <form method="post" class="form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <label for="goal_type">Type doel</label>
+      <select id="goal_type" name="goal_type" required>
+        <option value="weekly_units">Maximaal X glazen per week</option>
+        <option value="dry_days">Minimaal X alcoholvrije dagen per week</option>
+        <option value="abstain">Volledig stoppen met alcohol</option>
+      </select>
+
+      <div id="target-group">
+        <label for="target_value">Doelwaarde</label>
+        <input type="number" id="target_value" name="target_value" min="0" max="50" step="1" value="7">
+      </div>
+
+      <button type="submit" class="btn btn-primary">Doel instellen</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Actieve doelen</h2>
+    {% if active_goals %}
+      {% for goal in active_goals %}
+      <div class="goal-item">
+        {% if goal.goal_type == 'weekly_units' %}
+          <p>Max <strong>{{ goal.target_value|int }}</strong> glazen/week</p>
+        {% elif goal.goal_type == 'dry_days' %}
+          <p>Min <strong>{{ goal.target_value|int }}</strong> alcoholvrije dagen/week</p>
+        {% elif goal.goal_type == 'abstain' %}
+          <p><strong>Volledig stoppen</strong></p>
+        {% endif %}
+        <small>Sinds {{ goal.start_date.strftime('%d-%m-%Y') }}</small>
+        <form method="post" action="{{ url_for('main.deactivate_goal', goal_id=goal.id) }}" class="inline-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-small btn-ghost">Deactiveren</button>
+        </form>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="empty">Geen actief doel. Stel er een in om gemotiveerd te blijven.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card info-card">
+  <h2>Strategieën die werken</h2>
+  <div class="strategies">
+    <div class="strategy">
+      <h3>Geleidelijk minderen</h3>
+      <p>Verlaag stap voor stap. Bijvoorbeeld van 14 naar 10 glazen per week, dan naar 7.</p>
+    </div>
+    <div class="strategy">
+      <h3>Alcoholvrije dagen</h3>
+      <p>Plan vaste dagen zonder alcohol. Dit verbetert slaap en vermindert gewenning.</p>
+    </div>
+    <div class="strategy">
+      <h3>Stoppen</h3>
+      <p>Volledig stoppen geeft de grootste gezondheidswinst. Overleg met je huisarts bij fysieke afhankelijkheid.</p>
+    </div>
+    <div class="strategy">
+      <h3>Hulp zoeken</h3>
+      <p>Je staat er niet alleen voor. Praat met je huisarts, of bel de hulplijn: 0900-1995 (Trimbos).</p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ csp_nonce }}">
+  const goalType = document.getElementById('goal_type');
+  const targetGroup = document.getElementById('target-group');
+  const targetValue = document.getElementById('target_value');
+
+  function updateTarget() {
+    if (goalType.value === 'abstain') {
+      targetGroup.style.display = 'none';
+      targetValue.value = 0;
+    } else if (goalType.value === 'dry_days') {
+      targetGroup.style.display = 'block';
+      targetValue.value = 3;
+      targetValue.max = 7;
+    } else {
+      targetGroup.style.display = 'block';
+      targetValue.value = 7;
+      targetValue.max = 50;
+    }
+  }
+  goalType.addEventListener('change', updateTarget);
+  updateTarget();
+</script>
+{% endblock %}

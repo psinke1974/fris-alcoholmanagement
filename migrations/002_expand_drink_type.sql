@@ -1,0 +1,3 @@
+-- Vergroot drink_type voor samenvattingen zoals "2× Tripel, 1× Wijnglas"
+-- SQLite handhaaft geen VARCHAR-lengte; dit modelveld is VARCHAR(255) voor andere databases.
+-- Geen wijziging nodig in bestaande SQLite-databases.

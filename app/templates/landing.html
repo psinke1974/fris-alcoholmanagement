@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}{{ site_name }} — minder of stoppen met alcohol{% endblock %}
+
+{% block content %}
+<section class="landing-hero">
+  <p class="landing-brand">{{ site_name }}</p>
+  <h1>Bewust omgaan met alcohol, op jouw tempo</h1>
+  <p class="landing-lead">{{ site_tagline }}</p>
+  <div class="landing-actions">
+    <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Gratis beginnen</a>
+    <a href="{{ url_for('auth.login') }}" class="btn btn-secondary">Inloggen</a>
+  </div>
+  <p class="landing-install">Op je telefoon: open deze site in je browser en kies <em>Zet op beginscherm</em> / <em>Installeren</em>.</p>
+</section>
+
+<section class="landing-features">
+  <h2>Wat je kunt doen</h2>
+  <ul class="feature-list">
+    <li>
+      <strong>Dagelijks registreren</strong>
+      <span>Standaardglazen (RIVM) of een alcoholvrije dag met één tik.</span>
+    </li>
+    <li>
+      <strong>Doelen stellen</strong>
+      <span>Max glazen per week, alcoholvrije dagen, of volledig stoppen.</span>
+    </li>
+    <li>
+      <strong>Inzicht &amp; motivatie</strong>
+      <span>Trends, streaks, tips en begeleiding per fase bij stoppen.</span>
+    </li>
+    <li>
+      <strong>Privacy voorop</strong>
+      <span>Jouw gegevens, geen advertenties. Optioneel inloggen met passkey.</span>
+    </li>
+  </ul>
+</section>
+
+<section class="landing-note card">
+  <h2>Geen therapie — wél structuur</h2>
+  <p>
+    {{ site_name }} is bedoeld voor mensen die willen minderen of stoppen,
+    en voor professionals die een laagdrempelige tool willen aanbevelen.
+    Het vervangt geen behandeling. Bij zorgen: praat met je huisarts of bel de Trimbos-hulplijn.
+  </p>
+  <p>
+    <a href="{{ url_for('main.about') }}">Meer over methode &amp; richtlijnen</a>
+    ·
+    <a href="{{ url_for('main.partners') }}">Voor GGD’s en gemeenten</a>
+  </p>
+</section>
+{% endblock %}

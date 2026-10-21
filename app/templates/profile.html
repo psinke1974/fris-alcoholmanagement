@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Profiel — {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Profiel</h1>
+</div>
+
+<div class="two-col">
+  <div class="card">
+    <h2>Persoonlijke gegevens</h2>
+    <p class="subtitle">Optioneel — helpt ons gepersonaliseerde tips en richtlijnen te tonen.</p>
+
+    <form method="post" class="form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <label for="email">E-mailadres</label>
+      <input type="email" id="email" name="email" value="{{ profile.email or '' }}" placeholder="voor wachtwoordherstel" autocomplete="email">
+      <small>Optioneel — nodig om je wachtwoord te kunnen resetten.</small>
+
+      <label for="age">Leeftijd</label>
+      <input type="number" id="age" name="age" min="13" max="120" value="{{ profile.age or '' }}" placeholder="Bijv. 35">
+
+      <label for="gender">Geslacht</label>
+      <select id="gender" name="gender">
+        {% for value, label in genders %}
+        <option value="{{ value }}" {% if profile.gender == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="education">Opleiding</label>
+      <select id="education" name="education">
+        {% for value, label in education_levels %}
+        <option value="{{ value }}" {% if profile.education == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="country">Land</label>
+      <input type="text" id="country" name="country" value="{{ profile.country or '' }}" placeholder="Bijv. Nederland">
+
+      <button type="submit" class="btn btn-primary">Opslaan</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>🔐 Passkeys</h2>
+    <p class="subtitle">Log veilig in zonder wachtwoord via vingerafdruk, gezichtsherkenning of pincode.</p>
+
+    {% if credentials %}
+    <ul class="passkey-list">
+      {% for cred in credentials %}
+      <li>
+        <span>{{ cred.device_name }} — {{ cred.created_at.strftime('%d-%m-%Y') }}</span>
+        <form method="post" action="{{ url_for('auth.passkey_delete', cred_id=cred.id) }}" class="inline-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-small btn-ghost">Verwijderen</button>
+        </form>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="empty">Nog geen passkey ingesteld.</p>
+    {% endif %}
+
+    <button type="button" id="add-passkey" class="btn btn-secondary">Passkey toevoegen</button>
+  </div>
+</div>
+
+<div class="card info-card">
+  <h2>Privacy</h2>
+  <p>Je gegevens worden lokaal opgeslagen in een beveiligde database. Wachtwoorden worden gehasht en nooit leesbaar opgeslagen. Profielgegevens worden alleen gebruikt voor gepersonaliseerde tips — ze worden niet gedeeld met derden.</p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/webauthn.js') }}"></script>
+<script nonce="{{ csp_nonce }}">
+  document.getElementById('add-passkey').addEventListener('click', async () => {
+    const name = prompt('Naam voor dit apparaat:', 'Mijn passkey');
+    if (!name) return;
+    try {
+      await window.passkeyRegister(name);
+      alert('Passkey succesvol toegevoegd!');
+      location.reload();
+    } catch (e) {
+      alert('Passkey toevoegen mislukt: ' + e.message);
+    }
+  });
+</script>
+{% endblock %}

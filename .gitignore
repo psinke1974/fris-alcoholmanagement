@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Virtuele omgevingen
+.venv/
+venv/
+env/
+
+# Configuratie met geheimen
+.env
+.env.*
+!.env.example
+
+# Lokale database en gebruikersdata
+data/
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# Test- en tool-artefacten
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Editors en OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

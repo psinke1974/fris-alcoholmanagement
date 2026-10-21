@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Registreren — {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+  <p class="auth-brand">{{ site_name }}</p>
+  <h1>Account aanmaken</h1>
+  <p class="subtitle">Begin vandaag met bewust omgaan met alcohol.</p>
+
+  <form method="post" class="form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="username">Gebruikersnaam</label>
+    <input type="text" id="username" name="username" required minlength="3" autocomplete="username" autofocus>
+
+    <label for="password">Wachtwoord</label>
+    <input type="password" id="password" name="password" required minlength="8" autocomplete="new-password">
+    <small>Minimaal 8 tekens</small>
+
+    <label for="password2">Wachtwoord bevestigen</label>
+    <input type="password" id="password2" name="password2" required autocomplete="new-password">
+
+    <label class="checkbox">
+      <input type="checkbox" name="accept_privacy" value="1" required>
+      Ik ga akkoord met de
+      <a href="{{ url_for('main.privacy') }}" target="_blank" rel="noopener">privacyverklaring</a>
+      en begrijp dat dit geen medisch advies is.
+    </label>
+
+    <button type="submit" class="btn btn-primary">Registreren</button>
+  </form>
+
+  <p class="auth-footer">Al een account? <a href="{{ url_for('auth.login') }}">Inloggen</a></p>
+</div>
+{% endblock %}

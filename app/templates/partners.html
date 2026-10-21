@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Voor partners — {{ site_name }}{% endblock %}
+{% block head %}
+<style>
+  @media print {
+    .nav, .footer-links, .partners-actions, .no-print { display: none !important; }
+    .footer { border: none; }
+    body { background: #fff; }
+    .partners-sheet { box-shadow: none; border: none; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="partners-actions no-print">
+  <button type="button" class="btn btn-secondary" data-action="print">One-pager printen / PDF</button>
+  <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Demo-account aanmaken</a>
+</div>
+
+<article class="partners-sheet">
+  <header class="partners-header">
+    <img src="{{ url_for('static', filename='icons/icon-192.png') }}" alt="" width="56" height="56">
+    <div>
+      <p class="partners-kicker">Samenwerking · preventie · e-health</p>
+      <h1>{{ site_name }}</h1>
+      <p class="partners-tagline">{{ site_tagline }}</p>
+    </div>
+  </header>
+
+  <section>
+    <h2>Het probleem</h2>
+    <p>
+      Veel mensen willen minderen of stoppen met alcohol, maar missen dagelijkse structuur.
+      Professionals hebben weinig tijd voor intensieve begeleiding; wachtlijsten en stigma
+      houden mensen weg van zorg. Een laagdrempelige, privacyvriendelijke tracker vult
+      precies dat gat — zonder te pretenderen therapie te zijn.
+    </p>
+  </section>
+
+  <section>
+    <h2>De oplossing</h2>
+    <p>
+      {{ site_name }} is een Nederlandse webapp (ook te installeren op de telefoon) waarmee
+      burgers hun gebruik bijhouden in standaardglazen (RIVM), doelen stellen, trends zien,
+      een dagboek bijhouden en tips krijgen — inclusief fasering bij stoppen.
+      Altijd met doorverwijzing naar alcoholinfo.nl en de Trimbos-hulplijn.
+    </p>
+    <ul class="partners-bullets">
+      <li>Gratis voor eindgebruikers</li>
+      <li>Geen advertenties, geen verkoop van data</li>
+      <li>Passkeys / veilige login</li>
+      <li>Geschikt voor minderen én stoppen</li>
+      <li>Duidelijke medische disclaimer</li>
+    </ul>
+  </section>
+
+  <section class="partners-grid">
+    <div>
+      <h2>Voor wie</h2>
+      <ul>
+        <li>GGD-preventie &amp; lokale campagnes</li>
+        <li>Gemeenten (GALA / preventieakkoord)</li>
+        <li>Huisartsen / POH-GGZ (zelfmonitoring)</li>
+        <li>Arbo &amp; studentenwelzijn</li>
+        <li>Verslavingszorg als pre-/nazorg-tool</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Wat wij níet zijn</h2>
+      <ul>
+        <li>Geen behandelapp of diagnose-tool</li>
+        <li>Geen vervanging van Maxx / klinische zorg</li>
+        <li>Geen Trimbos-product (wel doorverwijzing)</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Simpel samenwerkingsmodel</h2>
+    <ol class="partners-steps">
+      <li><strong>Kennismaking</strong> — 20 min demo + feedback.</li>
+      <li><strong>Pilot (3 maanden)</strong> — vermelding op uw site/campagne; gratis of tegen kostprijs.</li>
+      <li><strong>Jaarlijkse regio-licentie</strong> — kostendekkend (~€1.500–€5.000/jaar afhankelijk van schaal): landingslink, support, optioneel anonieme geaggregeerde rapportage.</li>
+    </ol>
+    <p class="partners-note">
+      Geen groot winstmodel — wel een duurzame tool die u kunt aanbevelen zonder zorgcapaciteit te belasten.
+    </p>
+  </section>
+
+  <section class="partners-cta">
+    <h2>Volgende stap</h2>
+    <p>
+      Mail <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>
+      voor een demo, of maak zelf een account en probeer de app.
+    </p>
+    <p class="partners-url">{{ request.url_root.rstrip('/') }}</p>
+  </section>
+</article>
+{% endblock %}

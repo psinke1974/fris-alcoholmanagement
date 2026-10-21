@@ -1,0 +1,381 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Dashboard</h1>
+  <a href="{{ url_for('main.log_drink') }}" class="btn btn-primary">+ Vandaag registreren</a>
+</div>
+
+{% if active_gap %}
+<div class="card gap-alert">
+  <h2>📋 {{ active_gap.days }} dag(en) niet geregistreerd</h2>
+  <p>
+    Periode {{ active_gap.label_start }} – {{ active_gap.label_end }}.
+    Onbekende dagen tellen niet mee in je grafieken.
+  </p>
+  <a href="{{ url_for('main.catch_up') }}" class="btn btn-primary">Inhaalmodus openen</a>
+</div>
+{% endif %}
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <span class="stat-label">Deze week</span>
+    <span class="stat-value {% if stats.week_units > stats.weekly_limit %}stat-warning{% endif %}">
+      {{ stats.week_units }}
+    </span>
+    <span class="stat-unit">standaardglazen</span>
+    <span class="stat-hint">Richtlijn: max {{ stats.weekly_limit }}/week</span>
+    {% if stats.week_incomplete %}
+    <span class="stat-hint stat-incomplete">{{ stats.week_days_logged }} van {{ stats.week_calendar_days }} dagen ingevuld</span>
+    {% endif %}
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Deze maand</span>
+    <span class="stat-value">{{ stats.month_units }}</span>
+    <span class="stat-unit">standaardglazen</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Alcoholvrije reeks</span>
+    <span class="stat-value">{{ stats.dry_streak }}</span>
+    <span class="stat-unit">dagen (geregistreerd)</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Dagen bijgehouden</span>
+    <span class="stat-value">{{ stats.days_logged }}</span>
+    <span class="stat-unit">totaal</span>
+  </div>
+</div>
+
+{% if goals %}
+<div class="card goal-banner">
+  <h2>🎯 Actief doel</h2>
+  {% for goal in goals %}
+    {% if goal.goal_type == 'weekly_units' %}
+      <p>Maximaal <strong>{{ goal.target_value|int }}</strong> standaardglazen per week</p>
+    {% elif goal.goal_type == 'dry_days' %}
+      <p>Minimaal <strong>{{ goal.target_value|int }}</strong> alcoholvrije dagen per week</p>
+    {% elif goal.goal_type == 'abstain' %}
+      <p><strong>Volledig stoppen</strong> met alcohol</p>
+    {% endif %}
+  {% endfor %}
+</div>
+{% else %}
+<div class="card goal-banner goal-empty">
+  <p>Nog geen doel ingesteld. <a href="{{ url_for('main.goals') }}">Stel een doel in</a> voor extra motivatie.</p>
+</div>
+{% endif %}
+
+{% if badges.recently_earned %}
+<div class="card milestone-celebration">
+  {% for m in badges.recently_earned %}
+  <p class="milestone-new">🎉 Nieuwe mijlpaal: <strong>{{ m.icon }} {{ m.title }}</strong> — {{ m.description }}</p>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="card">
+  <h2>🏆 Mijlpalen</h2>
+  <p class="subtitle">Alleen opeenvolgende dagen die je expliciet als alcoholvrij hebt geregistreerd tellen mee. Niet-geregistreerde periodes breken de reeks.</p>
+
+  <div class="badge-progress-row">
+    <div class="badge-progress">
+      <span class="badge-progress-label">Geregistreerde alcoholvrije dagen op rij</span>
+      <span class="badge-progress-value">{{ badges.consecutive_alcohol_free_days }}</span>
+      {% if badges.days.next %}
+      <div class="progress-bar"><div class="progress-fill" style="width: {{ badges.days.next.progress_pct }}%"></div></div>
+      <small>Nog {{ badges.days.next.remaining }} dag(en) tot {{ badges.days.next.title }}</small>
+      {% else %}
+      <small>Alle dag-mijlpalen behaald!</small>
+      {% endif %}
+    </div>
+    <div class="badge-progress">
+      <span class="badge-progress-label">Alcoholvrije weken op rij</span>
+      <span class="badge-progress-value">{{ badges.dry_week_streak }}</span>
+      <div class="progress-bar"><div class="progress-fill" style="width: {{ (badges.consecutive_alcohol_free_days % 7) / 7 * 100 }}%"></div></div>
+      <small>{{ badges.consecutive_alcohol_free_days % 7 }}/7 dagen naar volgende week (7 opeenvolgende geregistreerde dagen met 0 glazen)</small>
+    </div>
+  </div>
+
+  <h3 class="badge-section-title">Dagen</h3>
+  <div class="badge-grid">
+    {% for badge in badges.days.earned + badges.days.locked %}
+    <div class="badge {% if badge.earned %}badge-earned{% else %}badge-locked{% endif %}" title="{{ badge.description }}">
+      <span class="badge-icon">{{ badge.icon }}</span>
+      <span class="badge-title">{{ badge.title }}</span>
+      <span class="badge-threshold">{{ badge.threshold }}d</span>
+    </div>
+    {% endfor %}
+  </div>
+
+  <h3 class="badge-section-title">Weken</h3>
+  <div class="badge-grid">
+    {% for badge in badges.weeks.earned + badges.weeks.locked %}
+    <div class="badge {% if badge.earned %}badge-earned{% else %}badge-locked{% endif %}" title="{{ badge.description }}">
+      <span class="badge-icon">{{ badge.icon }}</span>
+      <span class="badge-title">{{ badge.title }}</span>
+      <span class="badge-threshold">{{ badge.threshold }}w</span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="charts-row">
+  <div class="card chart-card">
+    <h2>Trend — standaardglazen per week</h2>
+    <p class="chart-subtitle">
+      Per week: som van ingevulde dagen
+      {% if trends.has_backfill %}
+      — vóór registratie alleen ingevulde dagen
+      {% else %}
+      — onbekende dagen tellen niet mee
+      {% endif %}
+    </p>
+    <canvas id="unitsChart" height="200"></canvas>
+    {% if trends.labels %}
+    <table class="table chart-table">
+      <thead>
+        <tr>
+          <th>Week</th>
+          <th>Glazen</th>
+          <th>Richtlijn</th>
+          {% if chart_weekly_goal is not none %}<th>Jouw doel</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in range(trends.labels|length) %}
+        <tr class="{% if not trends.is_complete[i] %}row-incomplete{% endif %}">
+          <td>{{ trends.labels[i] }}</td>
+          <td>{{ trends.units[i] }}{% if not trends.is_complete[i] %} <span class="incomplete-hint">({{ trends.days_logged[i] }}/{{ trends.days_in_period[i] }} dagen)</span>{% endif %}</td>
+          <td>{{ stats.weekly_limit }}</td>
+          {% if chart_weekly_goal is not none %}<td>{{ chart_weekly_goal|int if chart_weekly_goal == chart_weekly_goal|int else chart_weekly_goal }}</td>{% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+  <div class="card chart-card">
+    <h2>Alcoholvrije dagen per week</h2>
+    <p class="chart-subtitle">
+      Per week: expliciet geregistreerde dagen met 0 glazen
+      {% if trends.has_backfill %}
+      (vóór registratie alleen ingevulde dagen)
+      {% else %}
+      — onbekende dagen tellen niet mee
+      {% endif %}
+    </p>
+    <canvas id="dryChart" height="200"></canvas>
+    {% if trends.labels %}
+    <table class="table chart-table">
+      <thead>
+        <tr>
+          <th>Week</th>
+          <th>Alcoholvrij</th>
+          <th>Dagen</th>
+          {% if chart_dry_days_goal is not none %}<th>Jouw doel</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in range(trends.labels|length) %}
+        <tr class="{% if not trends.is_complete[i] %}row-incomplete{% endif %}">
+          <td>{{ trends.labels[i] }}</td>
+          <td>{{ trends.dry_days[i] }}{% if not trends.is_complete[i] %} <span class="incomplete-hint">({{ trends.days_logged[i] }}/{{ trends.days_in_period[i] }} ingevuld)</span>{% endif %}</td>
+          <td>{{ trends.days_in_period[i] }}</td>
+          {% if chart_dry_days_goal is not none %}<td>{{ chart_dry_days_goal|int }}</td>{% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+</div>
+
+{% if phase_guidance %}
+<div class="card phase-card">
+  <h2>🌿 {{ phase_guidance.label }}</h2>
+  <p class="subtitle">{{ phase_guidance.description }}</p>
+  {% if phase_guidance.days_since_last_drink > 0 and phase_guidance.mode != 'reduction' %}
+  <p class="phase-days">{{ phase_guidance.days_since_last_drink }} opeenvolgende geregistreerde alcoholvrije dag{{ 'en' if phase_guidance.days_since_last_drink != 1 else '' }}</p>
+  {% endif %}
+
+  {% if phase_guidance.all_phases and phase_guidance.progress %}
+  <div class="phase-timeline">
+    {% for phase in phase_guidance.all_phases %}
+    <span class="phase-step {% if phase.key == phase_guidance.phase_key %}phase-step-active{% elif loop.index0 < phase_guidance.progress.current_index %}phase-step-done{% endif %}"
+          title="{{ phase.label }}">{{ phase.label }}</span>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="effects-grid">
+    <div class="effects-col effects-positive">
+      <h3>✅ Wat je kunt verwachten (positief)</h3>
+      <ul>
+        {% for effect in phase_guidance.positive_effects %}
+        <li>{{ effect }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="effects-col effects-negative">
+      <h3>⚠️ Mogelijke uitdagingen</h3>
+      <ul>
+        {% for effect in phase_guidance.negative_effects %}
+        <li>{{ effect }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <h3 class="phase-tips-title">Tips voor deze fase</h3>
+  <div class="tips-list">
+    {% for tip in phase_guidance.tips %}
+    <div class="tip tip-{{ tip.category }}">
+      <strong>{{ tip.title }}</strong>
+      <p>{{ tip.text }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<div class="two-col">
+  <div class="card">
+    <h2>💡 Tips voor jou</h2>
+    <div class="tips-list">
+      {% for tip in tips %}
+      <div class="tip tip-{{ tip.category }}">
+        <strong>{{ tip.title }}</strong>
+        <p>{{ tip.text }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Recente registraties</h2>
+    {% if recent %}
+    <table class="table">
+      <thead>
+        <tr><th>Datum</th><th>Glazen</th><th>Type</th></tr>
+      </thead>
+      <tbody>
+        {% for log in recent %}
+        <tr>
+          <td>{{ log.log_date.strftime('%d-%m-%Y') }}</td>
+          <td>{{ log.units }}</td>
+          <td>{{ log.drink_type or '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="empty">Nog geen registraties. <a href="{{ url_for('main.log_drink') }}">Begin vandaag</a>.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card info-card">
+  <h2>Wat is een standaardglas?</h2>
+  <p>1 standaardglas = 10 gram pure alcohol. Dat is ongeveer: 1 glas bier (250 ml), 1 glas wijn (100 ml), of 1 shot sterke drank (35 ml). De Nederlandse richtlijn is maximaal 14 glazen per week (mannen) of 7 (vrouwen), met minstens 2 alcoholvrije dagen.</p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/chartjs/chart.umd.js') }}"></script>
+<script nonce="{{ csp_nonce }}">
+  const trends = {{ trends | tojson }};
+  const limit = {{ stats.weekly_limit }};
+  const weeklyGoal = {{ chart_weekly_goal | tojson }};
+  const dryDaysGoal = {{ chart_dry_days_goal | tojson }};
+  const compareLimit = weeklyGoal !== null ? weeklyGoal : limit;
+  const maxDryDays = Math.max(7, dryDaysGoal ?? 0, ...trends.days_in_period);
+
+  const unitsDatasets = [{
+    label: 'Standaardglazen',
+    data: trends.units,
+    backgroundColor: trends.is_complete.map((complete, i) => {
+      const over = trends.units[i] > compareLimit;
+      if (!complete) return over ? 'rgba(220, 80, 60, 0.35)' : 'rgba(46, 125, 90, 0.35)';
+      return over ? 'rgba(220, 80, 60, 0.7)' : 'rgba(46, 125, 90, 0.7)';
+    }),
+    borderColor: trends.is_complete.map(complete =>
+      complete ? 'transparent' : 'rgba(120, 120, 120, 0.5)'
+    ),
+    borderWidth: trends.is_complete.map(complete => complete ? 0 : 1),
+    borderDash: trends.is_complete.map(complete => complete ? [] : [4, 4]),
+    borderRadius: 6,
+    minBarLength: 4,
+  }, {
+    label: 'Richtlijn',
+    data: Array(trends.labels.length).fill(limit),
+    type: 'line',
+    borderColor: 'rgba(200, 150, 50, 0.8)',
+    borderDash: [5, 5],
+    pointRadius: 0,
+    fill: false,
+  }];
+
+  if (weeklyGoal !== null) {
+    unitsDatasets.push({
+      label: 'Jouw doel',
+      data: Array(trends.labels.length).fill(weeklyGoal),
+      type: 'line',
+      borderColor: 'rgba(46, 125, 90, 0.9)',
+      borderWidth: 2,
+      pointRadius: 0,
+      fill: false,
+    });
+  }
+
+  const unitsYMax = Math.max(limit, weeklyGoal ?? 0, ...trends.units, 1) + 2;
+
+  new Chart(document.getElementById('unitsChart'), {
+    type: 'bar',
+    data: { labels: trends.labels, datasets: unitsDatasets },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: true } },
+      scales: { y: { beginAtZero: true, suggestedMax: unitsYMax } },
+    },
+  });
+
+  const dryDatasets = [{
+    label: 'Alcoholvrije dagen',
+    data: trends.dry_days,
+    backgroundColor: trends.is_complete.map(complete =>
+      complete ? 'rgba(46, 125, 90, 0.6)' : 'rgba(46, 125, 90, 0.3)'
+    ),
+    borderColor: trends.is_complete.map(complete =>
+      complete ? 'transparent' : 'rgba(120, 120, 120, 0.5)'
+    ),
+    borderWidth: trends.is_complete.map(complete => complete ? 0 : 1),
+    borderDash: trends.is_complete.map(complete => complete ? [] : [4, 4]),
+    borderRadius: 6,
+    minBarLength: 4,
+  }];
+
+  if (dryDaysGoal !== null) {
+    dryDatasets.push({
+      label: 'Jouw doel',
+      data: Array(trends.labels.length).fill(dryDaysGoal),
+      type: 'line',
+      borderColor: 'rgba(200, 150, 50, 0.9)',
+      borderDash: [4, 4],
+      borderWidth: 2,
+      pointRadius: 0,
+      fill: false,
+    });
+  }
+
+  new Chart(document.getElementById('dryChart'), {
+    type: 'bar',
+    data: { labels: trends.labels, datasets: dryDatasets },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: dryDaysGoal !== null } },
+      scales: { y: { beginAtZero: true, max: maxDryDays, ticks: { stepSize: 1 } } },
+    },
+  });
+</script>
+{% endblock %}

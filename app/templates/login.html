@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Inloggen — {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+  <p class="auth-brand">{{ site_name }}</p>
+  <h1>Welkom terug</h1>
+  <p class="subtitle">{{ site_tagline }}</p>
+
+  <form method="post" class="form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="username">Gebruikersnaam</label>
+    <input type="text" id="username" name="username" required autocomplete="username" autofocus>
+
+    <label for="password">Wachtwoord</label>
+    <input type="password" id="password" name="password" required autocomplete="current-password">
+
+    <label class="checkbox">
+      <input type="checkbox" name="remember" value="1"> Onthoud mij
+    </label>
+
+    <button type="submit" class="btn btn-primary">Inloggen</button>
+  </form>
+
+  <p class="auth-footer"><a href="{{ url_for('auth.forgot_password') }}">Wachtwoord vergeten?</a></p>
+
+  <div class="divider"><span>of</span></div>
+
+  <button type="button" id="passkey-login" class="btn btn-secondary btn-full">
+    Inloggen met passkey
+  </button>
+
+  <p class="auth-footer">Nog geen account? <a href="{{ url_for('auth.register') }}">Registreren</a></p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/webauthn.js') }}"></script>
+<script nonce="{{ csp_nonce }}">
+  document.getElementById('passkey-login').addEventListener('click', async () => {
+    const username = document.getElementById('username').value.trim();
+    try {
+      await window.passkeyLogin(username || null);
+    } catch (e) {
+      alert('Passkey inloggen mislukt: ' + e.message);
+    }
+  });
+</script>
+{% endblock %}

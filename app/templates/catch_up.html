@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Inhaalmodus — {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Inhaalmodus</h1>
+</div>
+
+<div class="card gap-banner">
+  <h2>Je hebt {{ gap.days }} dag(en) niet geregistreerd</h2>
+  <p class="gap-range">{{ gap.label_start }} – {{ gap.label_end }}</p>
+  <p class="gap-intro">
+    Onbekende dagen tellen niet mee in je grafieken en streaks.
+    Kies hoe je deze periode wilt invullen — of sla over als je het niet meer weet.
+  </p>
+</div>
+
+<div class="gap-actions">
+  <form method="post" class="card gap-action-card">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="gap_start" value="{{ gap.start.isoformat() }}">
+    <input type="hidden" name="gap_end" value="{{ gap.end.isoformat() }}">
+    <h3>Hele periode niet gedronken</h3>
+    <p>Registreer alle {{ gap.days }} dagen als 0 standaardglazen.</p>
+    <button type="submit" name="action" value="dry_all" class="btn btn-primary">Alles invullen als niet gedronken</button>
+  </form>
+
+  <div class="card gap-action-card">
+    <h3>Dag voor dag invullen</h3>
+    <p>Geef per dag aan wat je gedronken hebt — of markeer als niet gedronken.</p>
+    <a href="#gap-days" class="btn btn-secondary">Naar dagelijks overzicht</a>
+  </div>
+
+  <form method="post" class="card gap-action-card">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="gap_start" value="{{ gap.start.isoformat() }}">
+    <input type="hidden" name="gap_end" value="{{ gap.end.isoformat() }}">
+    <h3>Overslaan</h3>
+    <p>Laat deze periode onbekend. Je statistieken tonen dan een onvolledige week.</p>
+    <button type="submit" name="action" value="skip" class="btn btn-ghost">Periode overslaan</button>
+  </form>
+</div>
+
+<div class="card" id="gap-days">
+  <h2>Dag voor dag</h2>
+  <table class="table gap-days-table">
+    <thead>
+      <tr>
+        <th>Datum</th>
+        <th>Acties</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for day in gap.days_list %}
+      <tr>
+        <td>{{ day.strftime('%A %d %B %Y') }}</td>
+        <td class="gap-day-actions">
+          <form method="post" class="gap-day-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="gap_start" value="{{ gap.start.isoformat() }}">
+            <input type="hidden" name="gap_end" value="{{ gap.end.isoformat() }}">
+            <input type="hidden" name="log_date" value="{{ day.isoformat() }}">
+            <button type="submit" name="action" value="dry_day" class="btn btn-small btn-secondary">Niet gedronken</button>
+          </form>
+          <a href="{{ url_for('main.log_drink', date=day.isoformat()) }}" class="btn btn-small btn-ghost">Invullen</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<p class="gap-footer">
+  <a href="{{ url_for('main.dashboard') }}">Terug naar dashboard</a>
+</p>
+{% endblock %}

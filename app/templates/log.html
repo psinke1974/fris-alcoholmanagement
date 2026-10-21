@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Registreren — {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Alcohol registreren</h1>
+</div>
+
+<div class="card log-card">
+  <p class="log-intro">Tik op wat je gedronken hebt — de standaardglazen worden automatisch berekend. <strong>Geen alcohol?</strong> Tik op de groene knop onderaan.</p>
+
+  <form method="post" class="form form-wide" id="log-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="drink_items" id="drink_items" value="[]">
+
+    <div class="form-group">
+      <label>Datum</label>
+      <div class="date-picker" id="date-picker">
+        <button type="button" class="date-nav" id="date-prev" aria-label="Vorige dag">‹</button>
+        <button type="button" class="date-display" id="date-display" aria-label="Datum kiezen">
+          <span class="date-weekday" id="date-weekday"></span>
+          <span class="date-formatted" id="date-formatted"></span>
+          <input type="date" id="log_date" name="log_date" value="{{ today }}" class="date-input-hidden" required>
+        </button>
+        <button type="button" class="date-nav" id="date-next" aria-label="Volgende dag">›</button>
+        <button type="button" class="btn btn-ghost btn-today" id="date-today">Vandaag</button>
+      </div>
+      <div class="log-status log-status--unregistered" id="log-status" role="status">
+        <span class="log-status-icon" id="log-status-icon" aria-hidden="true">○</span>
+        <span class="log-status-text" id="log-status-text">Nog niet geregistreerd</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Wat heb je gedronken?</label>
+      <div class="drink-grid" id="drink-grid">
+        {% for drink in drink_options %}
+        <button
+          type="button"
+          class="drink-tile"
+          data-id="{{ drink.id }}"
+          data-units="{{ drink.units }}"
+          data-label="{{ drink.label }}"
+          style="--drink-color: {{ drink.color }}"
+          aria-label="{{ drink.label }}, {{ drink.units }} standaardglas"
+        >
+          <span class="drink-icon" aria-hidden="true">{{ drink.icon }}</span>
+          <span class="drink-label">{{ drink.label }}</span>
+          <span class="drink-hint">{{ drink.hint }}</span>
+          <span class="drink-units" data-units-value="{{ drink.units }}"></span>
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="drink-basket card-inner" id="drink-basket" hidden>
+      <h3 class="basket-title">Geselecteerd</h3>
+      <ul class="basket-list" id="basket-list"></ul>
+      <button type="button" class="btn-text" id="basket-clear">Alles wissen</button>
+    </div>
+
+    <div class="units-total" id="units-total">
+      <span class="units-total-label">Totaal</span>
+      <span class="units-total-value" id="units-display">0</span>
+      <span class="units-total-suffix">standaardglazen</span>
+    </div>
+
+    <button type="button" class="drink-tile drink-tile-zero" id="btn-zero">
+      <span class="drink-icon" aria-hidden="true">🌿</span>
+      <span class="drink-label">Geen alcohol</span>
+      <span class="drink-hint">0 standaardglazen</span>
+    </button>
+
+    <label for="notes">Notitie (optioneel)</label>
+    <input type="text" id="notes" name="notes" maxlength="255" placeholder="Bijv. verjaardag, stress...">
+
+    <button type="submit" class="btn btn-primary" id="btn-submit">Opslaan</button>
+  </form>
+</div>
+
+<div class="card info-card">
+  <h2>Hoe werkt de omrekening?</h2>
+  <p>1 standaardglas = 10 gram pure alcohol (RIVM). Elk drankje hierboven is berekend op volume en alcoholpercentage — bijvoorbeeld een tripel (250 ml, 8%) is ongeveer 1,6 glas.</p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ csp_nonce }}">
+  window.DRINK_OPTIONS = {{ drink_options | tojson }};
+  window.LOG_TODAY = {{ today | tojson }};
+  window.LOG_SELECTED_DATE = {{ selected_date | tojson }};
+  window.EXISTING_LOGS = {{ existing_logs | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/log.js') }}" defer></script>
+{% endblock %}

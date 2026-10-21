@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Dagboek — {{ site_name }}{% endblock %}
+
+{% block head %}
+<link href="{{ url_for('static', filename='vendor/quill/quill.snow.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>📓 Dagboek</h1>
+</div>
+
+<div class="card">
+  <h2>{% if editing %}Entry bewerken{% else %}Nieuwe entry{% endif %}</h2>
+  <p class="subtitle">Schrijf over je gevoelens, triggers, successen en uitdagingen. Je dagboek is privé.</p>
+
+  <form method="post" class="form form-wide" id="journal-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% if editing %}
+    <input type="hidden" name="entry_id" value="{{ editing.id }}">
+    {% endif %}
+    <input type="hidden" name="body_html" id="body_html" value="">
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="entry_date">Datum</label>
+        <input type="date" id="entry_date" name="entry_date"
+               value="{{ editing.entry_date.isoformat() if editing else today }}" required>
+      </div>
+      <div class="form-group">
+        <label for="title">Titel (optioneel)</label>
+        <input type="text" id="title" name="title" maxlength="200"
+               value="{{ editing.title or '' }}" placeholder="Bijv. Moeilijke avond">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Inhoud</label>
+      <div id="quill-editor" class="quill-editor"></div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Opslaan</button>
+      {% if editing %}
+      <a href="{{ url_for('main.journal') }}" class="btn btn-ghost">Annuleren</a>
+      {% endif %}
+    </div>
+  </form>
+</div>
+
+{% if entries %}
+<div class="card">
+  <h2>Eerdere entries</h2>
+  <div class="journal-list">
+    {% for entry in entries %}
+    <article class="journal-entry">
+      <header class="journal-entry-header">
+        <div>
+          <time class="journal-date">{{ entry.entry_date.strftime('%d-%m-%Y') }}</time>
+          {% if entry.title %}
+          <h3 class="journal-title">{{ entry.title }}</h3>
+          {% endif %}
+        </div>
+        <div class="journal-entry-actions">
+          <a href="{{ url_for('main.journal', edit=entry.id) }}" class="btn btn-ghost btn-small">Bewerken</a>
+          <form method="post" action="{{ url_for('main.delete_journal_entry', entry_id=entry.id) }}" class="journal-delete-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-ghost btn-small btn-danger" data-confirm="Entry verwijderen?">Verwijderen</button>
+          </form>
+        </div>
+      </header>
+      <div class="journal-body">{{ entry.body_html | safe }}</div>
+    </article>
+    {% endfor %}
+  </div>
+</div>
+{% else %}
+<div class="card">
+  <p class="empty">Nog geen dagboekentries. Begin met schrijven over hoe je je voelt vandaag.</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/quill/quill.js') }}"></script>
+<script nonce="{{ csp_nonce }}">
+  window.journalInitialContent = {{ (editing.body_html if editing else '') | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/journal.js') }}"></script>
+{% endblock %}

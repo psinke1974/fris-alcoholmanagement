@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Over — {{ site_name }}{% endblock %}
+
+{% block content %}
+<article class="prose-page">
+  <h1>Over {{ site_name }}</h1>
+  <p class="subtitle">Preventief hulpmiddel — geen medisch product</p>
+
+  <p>
+    {{ site_name }} helpt je om alcoholgebruik zichtbaar te maken en er iets mee te doen:
+    minderen, meer alcoholvrije dagen, of stoppen. De app is bedoeld als
+    <strong>structuur en bewustwording</strong>, niet als therapie of diagnose.
+  </p>
+
+  <h2>Methode</h2>
+  <ul>
+    <li><strong>Standaardglazen</strong> volgens gangbare RIVM-omrekening (circa 10&nbsp;g pure alcohol per glas).</li>
+    <li><strong>Doelen</strong> die bij jou passen: wekelijkse limiet, droge dagen, of abstinentie.</li>
+    <li><strong>Alcoholvrije reeks</strong> telt alleen afgesloten dagen (niet de lopende dag), zodat de app niet voorbarig juicht.</li>
+    <li><strong>Tips en fases</strong> bij stoppen, met doorverwijzing naar professionele hulp bij ernstige klachten.</li>
+  </ul>
+
+  <h2>Richtlijnen &amp; hulp</h2>
+  <p>
+    Informatie en wekelijkse richtlijnen sluiten aan bij publieke bronnen zoals
+    <a href="https://www.alcoholinfo.nl" target="_blank" rel="noopener">alcoholinfo.nl</a>
+    (Trimbos). {{ site_name }} is <strong>niet</strong> een product van het Trimbos-instituut
+    of de GGD; we verwijzen ernaar omdat dat de juiste plek is voor betrouwbare informatie.
+  </p>
+  <p>Hulplijn Trimbos: <strong>0900-1995</strong></p>
+
+  <h2>Voor professionals</h2>
+  <p>
+    GGD’s, gemeenten en praktijken kunnen de tool aanbevelen als laagdrempelige
+    zelfmonitoring. Zie de
+    <a href="{{ url_for('main.partners') }}">partner-onepager</a>
+    voor samenwerking en een kostendekkend model.
+  </p>
+
+  <h2>Op je telefoon</h2>
+  <p>
+    {{ site_name }} is een <strong>progressive web app</strong>: open de site in Safari of Chrome
+    en kies “Zet op beginscherm” / “App installeren”. Zo werkt het als een gewone app,
+    zonder App Store.
+  </p>
+
+  <p><a href="{{ url_for('auth.register') }}" class="btn btn-primary">Gratis account aanmaken</a></p>
+</article>
+{% endblock %}

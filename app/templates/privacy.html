@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Privacy — {{ site_name }}{% endblock %}
+
+{% block content %}
+<article class="prose-page">
+  <h1>Privacyverklaring</h1>
+  <p class="subtitle">Laatst bijgewerkt: juli 2026</p>
+
+  <p>
+    {{ site_name }} is een hulpmiddel om alcoholgebruik bij te houden.
+    We verwerken alleen gegevens die nodig zijn om de dienst te laten werken.
+    Er worden geen advertenties getoond en er wordt geen gebruikersdata verkocht.
+  </p>
+
+  <h2>Welke gegevens</h2>
+  <ul>
+    <li><strong>Account:</strong> gebruikersnaam en (gehasht) wachtwoord, of passkey-gegevens.</li>
+    <li><strong>Optioneel e-mailadres:</strong> alleen als je dat invult (bijv. voor wachtwoordreset).</li>
+    <li><strong>Profiel (optioneel):</strong> leeftijd, geslacht, opleiding, land — voor richtlijnen en tips.</li>
+    <li><strong>Registraties:</strong> datum, standaardglazen, eventuele notities; dagboekteksten.</li>
+    <li><strong>Doelen:</strong> type doel en streefwaarde.</li>
+  </ul>
+
+  <h2>Doel van de verwerking</h2>
+  <p>
+    Gegevens worden gebruikt om je dashboard, statistieken, tips en doelen te tonen,
+    en om inloggen veilig te maken. We maken geen medische diagnose.
+  </p>
+
+  <h2>Bewaartermijn</h2>
+  <p>
+    Gegevens blijven bewaard zolang je account actief is. Je kunt je accountgegevens
+    via het profiel bijwerken. Voor volledige verwijdering kun je contact opnemen via
+    <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.
+  </p>
+
+  <h2>Beveiliging</h2>
+  <ul>
+    <li>Wachtwoorden worden gehasht opgeslagen (niet leesbaar).</li>
+    <li>CSRF-bescherming en beveiligde sessiecookies.</li>
+    <li>Passkeys (WebAuthn) als wachtwoordloos alternatief.</li>
+    <li>Gegevens per gebruiker geïsoleerd.</li>
+  </ul>
+
+  <h2>Delen met derden</h2>
+  <p>
+    We delen geen individuele gebruiksgegevens met derden voor marketing.
+    Bij een eventuele samenwerking met een gemeente of GGD delen we alleen
+    <em>anonieme, geaggregeerde</em> inzichten — nooit jouw persoonlijke logboek —
+    en alleen als dat contractueel zo is afgesproken.
+  </p>
+
+  <h2>Jouw rechten</h2>
+  <p>
+    Onder de AVG kun je inzage, correctie of verwijdering van je gegevens vragen.
+    Mail daarvoor naar <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Vragen over privacy: <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.
+  </p>
+</article>
+{% endblock %}
