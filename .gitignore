@@ -17,7 +17,7 @@ env/
 !.env.example
 
 # Lokale database en gebruikersdata
-data/
+/data/
 *.db
 *.sqlite
 *.sqlite3
