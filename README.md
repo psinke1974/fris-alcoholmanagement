@@ -19,6 +19,8 @@ De app heet **Fris**; de naam is in te stellen met `SITE_NAME`.
 - Wachtwoord resetten via e-mail (optioneel e-mailadres in profiel)
 - Te installeren als **Progressive Web App** op telefoon of desktop
 - Publieke landingspagina, privacyverklaring en een one-pager voor partners (`/partners`)
+- **Eigen gegevens**: alles downloaden (JSON, registraties als CSV) en je account zelf definitief verwijderen
+- **Demo-modus** voor een openbare demo met tijdelijke voorbeeldaccounts (`DEMO_MODE=true`, zie [docs/demo.md](docs/demo.md))
 
 ## Snelstart
 
@@ -62,6 +64,7 @@ Zonder een eigen `SECRET_KEY` weigert de app buiten development te starten. Zie 
 | [docs/database.md](docs/database.md) | Datamodel en migraties |
 | [docs/deployment.md](docs/deployment.md) | In productie draaien |
 | [docs/security.md](docs/security.md) | Beveiligingsmaatregelen |
+| [docs/demo.md](docs/demo.md) | Openbare demo (demo-modus, Docker, Render) |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Bijdragen aan het project |
 | [SECURITY.md](SECURITY.md) | Een kwetsbaarheid melden |
 
@@ -73,6 +76,7 @@ Alcoholgebruik is gevoelige informatie. Daarom:
 - CSRF-bescherming, een strikte Content-Security-Policy en beveiligingsheaders op elke response;
 - alle JavaScript-bibliotheken worden lokaal geserveerd, dus er gaan geen verzoeken naar CDN's of andere derden;
 - gegevens zijn per gebruiker geïsoleerd en worden niet gecachet door browser of proxy;
+- gebruikers kunnen zelf al hun gegevens downloaden en hun account met alle gegevens verwijderen;
 - er is geen tracking en er zijn geen advertenties.
 
 Meer details in [docs/security.md](docs/security.md).
@@ -103,6 +107,8 @@ pip install -r requirements.txt
 cp .env.example .env      # set SECRET_KEY
 python run.py             # http://localhost:8080
 ```
+
+Users can download all their data (JSON, plus a CSV of their log) and delete their account themselves from the profile page. Setting `DEMO_MODE=true` turns an instance into a public demo with temporary, pre-filled accounts; a `Dockerfile` and a Render blueprint (`render.yaml`) are included, see [docs/demo.md](docs/demo.md).
 
 Run the tests with `pip install -r requirements-dev.txt && pytest`. For production, see [docs/deployment.md](docs/deployment.md) (in Dutch): run behind HTTPS with Gunicorn, set `SECRET_KEY`, `SESSION_COOKIE_SECURE=true` and the WebAuthn domain settings.
 

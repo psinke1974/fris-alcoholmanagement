@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Account verwijderen — {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Account verwijderen</h1>
+</div>
+
+<div class="card danger-card">
+  <h2>Dit kan niet ongedaan worden gemaakt</h2>
+  <p>
+    We verwijderen direct en definitief je account, je profiel, al je registraties,
+    doelen, dagboekentries en passkeys. We bewaren geen kopie.
+  </p>
+  <p>
+    Wil je je gegevens bewaren? Download ze dan eerst:
+    <a href="{{ url_for('main.export_json') }}">alles (JSON)</a> of
+    <a href="{{ url_for('main.export_csv') }}">registraties (CSV)</a>.
+  </p>
+
+  <form method="post" class="form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    {% if not is_demo %}
+    <label for="password">Bevestig met je wachtwoord</label>
+    <input type="password" id="password" name="password" required autocomplete="current-password">
+    {% endif %}
+
+    <label class="checkbox-label">
+      <input type="checkbox" name="confirm" value="1" required>
+      Ik begrijp dat al mijn gegevens definitief worden verwijderd.
+    </label>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-delete">Account definitief verwijderen</button>
+      <a href="{{ url_for('main.profile') }}" class="btn btn-secondary">Annuleren</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

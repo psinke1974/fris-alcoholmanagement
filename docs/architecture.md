@@ -29,7 +29,7 @@ fris-alcoholmanagement/
 │   ├── data/                   # Inhoud stopfasen (teksten)
 │   ├── blueprints/
 │   │   ├── auth/               # Login, registratie, passkeys
-│   │   └── main/               # Dashboard, log, doelen, profiel, dagboek
+│   │   └── main/               # Dashboard, log, doelen, profiel, dagboek, export en account verwijderen
 │   ├── models/
 │   │   ├── user.py             # User, Profile, WebAuthnCredential
 │   │   ├── drink.py            # DrinkLog
@@ -43,6 +43,8 @@ fris-alcoholmanagement/
 │   │   ├── gaps_service.py     # Gemiste dagen detecteren
 │   │   ├── drinks_service.py   # Drankjes → standaardglazen
 │   │   ├── journal_service.py  # Dagboek + HTML-sanitisatie
+│   │   ├── account_service.py  # Gegevens exporteren en account verwijderen
+│   │   ├── demo_service.py     # Demo-modus: voorbeeldaccounts en opruimen
 │   │   ├── email_service.py    # SMTP / log-fallback
 │   │   └── tokens.py           # Wachtwoordreset-tokens
 │   ├── static/                 # CSS, JavaScript, PWA, vendor/ (Chart.js, Quill)
@@ -51,6 +53,8 @@ fris-alcoholmanagement/
 ├── docs/                       # Documentatie
 ├── migrations/                 # SQL-schema scripts
 ├── tests/                      # Pytest tests
+├── Dockerfile                  # Container-image (Gunicorn)
+├── render.yaml                 # Render Blueprint voor de openbare demo
 ├── run.py                      # Development entry point
 └── requirements.txt
 ```

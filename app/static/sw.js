@@ -1,7 +1,9 @@
 /* Minimal service worker: cache shell assets for offline/open-from-home-screen. */
-const CACHE = "fris-v1";
+// v2: persoonlijke pagina's (Cache-Control: no-store) worden niet meer bewaard; v1 wordt gewist.
+const CACHE = "fris-v2";
+const OFFLINE_PAGE = "/static/offline.html";
 const PRECACHE = [
-  "/",
+  OFFLINE_PAGE,
   "/static/css/style.css",
   "/static/icons/icon-192.png",
   "/static/icons/icon-512.png",
@@ -34,11 +36,15 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       fetch(req)
         .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE).then((cache) => cache.put(req, copy));
+          // Pagina's met persoonlijke gegevens sturen no-store mee: die nooit op het apparaat bewaren.
+          const cacheControl = res.headers.get("Cache-Control") || "";
+          if (res.ok && !cacheControl.includes("no-store")) {
+            const copy = res.clone();
+            caches.open(CACHE).then((cache) => cache.put(req, copy));
+          }
           return res;
         })
-        .catch(() => caches.match(req).then((cached) => cached || caches.match("/")))
+        .catch(() => caches.match(req).then((cached) => cached || caches.match(OFFLINE_PAGE)))
     );
     return;
   }

@@ -11,6 +11,17 @@ class TestConfig(Config):
     WTF_CSRF_ENABLED = False
 
 
+@pytest.fixture(autouse=True)
+def reset_throttles():
+    """De inlog- en demo-rem zijn globaal per proces; laat ze niet tussen tests doorlekken."""
+    from app.blueprints.auth.routes import demo_throttle
+    from app.security import login_throttle
+
+    for throttle in (login_throttle, demo_throttle):
+        throttle._attempts.clear()
+    yield
+
+
 @pytest.fixture
 def app():
     application = create_app(TestConfig)

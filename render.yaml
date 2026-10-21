@@ -1,0 +1,27 @@
+# Render Blueprint voor de openbare demo van Fris (https://render.com/docs/blueprint-spec).
+# Gratis plan: de schijf is tijdelijk, wat voor een demo precies goed is (bij elke herstart een lege database).
+# Kies je een andere servicenaam, pas dan WEBAUTHN_RP_ID en WEBAUTHN_ORIGIN aan.
+services:
+  - type: web
+    name: fris-demo
+    runtime: docker
+    plan: free
+    region: frankfurt
+    healthCheckPath: /privacy
+    envVars:
+      - key: DEMO_MODE
+        value: "true"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: SESSION_COOKIE_SECURE
+        value: "true"
+      - key: TRUSTED_PROXIES
+        value: "1"
+      - key: WEBAUTHN_RP_ID
+        value: fris-demo.onrender.com
+      - key: WEBAUTHN_ORIGIN
+        value: https://fris-demo.onrender.com
+      - key: SITE_NAME
+        value: Fris
+      - key: CONTACT_EMAIL
+        sync: false

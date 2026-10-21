@@ -15,6 +15,12 @@ def apply_pending_migrations() -> None:
     if "gap_prompt_dismissed_until" not in columns:
         db.session.execute(text("ALTER TABLE users ADD COLUMN gap_prompt_dismissed_until DATE"))
         db.session.commit()
+    if "demo_expires_at" not in columns:
+        db.session.execute(text("ALTER TABLE users ADD COLUMN demo_expires_at DATETIME"))
+        db.session.execute(text(
+            "CREATE INDEX IF NOT EXISTS ix_users_demo_expires_at ON users(demo_expires_at)"
+        ))
+        db.session.commit()
 
     if "drink_logs" in inspector.get_table_names():
         log_columns = {col["name"] for col in inspector.get_columns("drink_logs")}

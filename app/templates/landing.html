@@ -6,10 +6,18 @@
   <p class="landing-brand">{{ site_name }}</p>
   <h1>Bewust omgaan met alcohol, op jouw tempo</h1>
   <p class="landing-lead">{{ site_tagline }}</p>
+  {% if demo_mode %}
+  <form method="post" action="{{ url_for('auth.demo_start') }}" class="landing-actions">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit" class="btn btn-primary">Probeer de demo</button>
+  </form>
+  <p class="landing-install">Je krijgt een tijdelijk account met acht weken voorbeeldgegevens. Geen registratie nodig.</p>
+  {% else %}
   <div class="landing-actions">
     <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Gratis beginnen</a>
     <a href="{{ url_for('auth.login') }}" class="btn btn-secondary">Inloggen</a>
   </div>
+  {% endif %}
   <p class="landing-install">Op je telefoon: open deze site in je browser en kies <em>Zet op beginscherm</em> / <em>Installeren</em>.</p>
 </section>
 

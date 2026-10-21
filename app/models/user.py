@@ -14,6 +14,8 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(256), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     gap_prompt_dismissed_until = db.Column(db.Date, nullable=True)
+    # Alleen gezet bij tijdelijke accounts in demo-modus; daarna wordt het account automatisch verwijderd.
+    demo_expires_at = db.Column(db.DateTime, nullable=True, index=True)
 
     profile = db.relationship("Profile", back_populates="user", uselist=False, cascade="all, delete-orphan")
     credentials = db.relationship("WebAuthnCredential", back_populates="user", cascade="all, delete-orphan")

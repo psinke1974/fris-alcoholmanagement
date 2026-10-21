@@ -9,6 +9,7 @@ Technische documentatie voor **fris-alcoholmanagement** (app-naam: Fris).
 | [Database](database.md) | Datamodel en migraties |
 | [Deployment](deployment.md) | In productie draaien |
 | [Beveiliging](security.md) | Beveiligingsmaatregelen en bekende beperkingen |
+| [Demo](demo.md) | Openbare demo: demo-modus, Docker en Render |
 
 ## Snelstart
 

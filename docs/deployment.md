@@ -49,5 +49,8 @@ Gebruik bij voorkeur een systemd-service zodat de app automatisch herstart.
 
 - **Inlog-rem**: het aantal mislukte inlogpogingen wordt per proces in het geheugen bijgehouden. Bij meerdere workers of servers is de limiet dus per worker. Voor grotere installaties is rate limiting in de reverse proxy aan te raden.
 - **Back-ups**: maak regelmatig een versleutelde back-up van de database (`data/minder_drinken.db`). Die bevat gevoelige gezondheidsgerelateerde gegevens.
-- **AVG**: alcoholgebruik is een gevoelig persoonsgegeven. Pas de privacyverklaring (`app/templates/privacy.html`) aan op jouw organisatie en verwerking voordat je de app openstelt.
+- **AVG**: gebruikers kunnen zelf al hun gegevens downloaden en hun account verwijderen (via Profiel). Wis verwijderde accounts ook uit back-ups volgens een vaste bewaartermijn en vermeld die in de privacyverklaring.
+- **Docker**: er is een `Dockerfile` (Gunicorn, één worker, draait niet als root). Koppel een volume op `/app/data` zodat de database bewaard blijft.
+- **Demo**: voor een openbare demo-omgeving, zie [demo.md](demo.md).
+- **AVG en privacyverklaring**: alcoholgebruik is een gevoelig persoonsgegeven. Pas de privacyverklaring (`app/templates/privacy.html`) aan op jouw organisatie en verwerking voordat je de app openstelt.
 - **Updates**: houd de afhankelijkheden in `requirements.txt` actueel (`pip list --outdated`).

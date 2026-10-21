@@ -22,6 +22,7 @@ erDiagram
         string password_hash
         datetime created_at
         date gap_prompt_dismissed_until
+        datetime demo_expires_at
     }
 
     profiles {
@@ -78,7 +79,9 @@ erDiagram
 
 ### users
 
-Accountgegevens. Wachtwoorden worden gehasht opgeslagen (nooit plaintext).
+Accountgegevens. Wachtwoorden worden gehasht opgeslagen (nooit plaintext). `demo_expires_at` is alleen gevuld bij tijdelijke accounts in demo-modus (zie [demo.md](demo.md)).
+
+Verwijdert een gebruiker zijn account, dan wist `delete_user_account` (`app/services/account_service.py`) de rijen in alle tabellen hieronder en daarna de gebruiker, in één transactie. Komt er een tabel met persoonsgegevens bij, voeg die dan toe aan zowel de export als de verwijdering in die service.
 
 ### profiles
 
@@ -125,6 +128,7 @@ Dagboekentries. `body_html` wordt bij opslaan gesanitized met `bleach` (alleen b
 | `migrations/003_add_profile_email.sql` | `profiles.email` |
 | `migrations/004_add_drink_items.sql` | `drink_logs.drink_items` |
 | `migrations/005_add_journal_entries.sql` | Tabel `journal_entries` |
+| `migrations/006_add_demo_expires_at.sql` | `users.demo_expires_at` |
 
 Kolommen die later zijn toegevoegd worden bij opstarten automatisch bijgewerkt door `app/migrate.py`.
 

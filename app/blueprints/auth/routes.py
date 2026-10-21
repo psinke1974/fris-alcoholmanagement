@@ -22,13 +22,18 @@ from webauthn.helpers.structs import (
 from app.constants import MIN_PASSWORD_LENGTH, MIN_USERNAME_LENGTH
 from app.extensions import db
 from app.models import Profile, User, WebAuthnCredential
-from app.security import login_throttle
+from app.security import LoginThrottle, login_throttle
+from app.services.demo_service import create_demo_user, is_demo_mode, purge_demo_users
 from app.services.email_service import send_password_reset_email
 from app.services.tokens import generate_password_reset_token, verify_password_reset_token
 from app.utils import EMAIL_RE, normalize_email
 
 auth_bp = Blueprint("auth", __name__)
 logger = logging.getLogger(__name__)
+
+# Aparte teller voor het aanmaken van demo-accounts, zodat die de inlog-rem niet beïnvloedt.
+demo_throttle = LoginThrottle()
+DEMO_THROTTLE_WINDOW = 3600
 
 
 def _safe_next_url(target: str | None) -> str | None:
@@ -73,6 +78,9 @@ def _rp_config() -> dict:
 def register():
     if current_user.is_authenticated:
         return redirect(url_for("main.dashboard"))
+    if is_demo_mode():
+        flash("In deze demo kun je geen eigen account aanmaken. Probeer de demo met voorbeeldgegevens.", "info")
+        return redirect(url_for("main.index"))
 
     if request.method == "POST":
         username = request.form.get("username", "").strip().lower()
@@ -143,10 +151,34 @@ def logout():
     return redirect(url_for("auth.login"))
 
 
+@auth_bp.route("/demo", methods=["POST"])
+def demo_start():
+    """Maak een tijdelijk demo-account met voorbeeldgegevens en log daarmee in."""
+    if not is_demo_mode():
+        return redirect(url_for("main.index"))
+
+    key = request.remote_addr or "onbekend"
+    if demo_throttle.is_blocked(key, current_app.config["DEMO_MAX_PER_IP_PER_HOUR"], DEMO_THROTTLE_WINDOW):
+        flash("Je hebt al een paar demo's gestart. Probeer het over een tijdje opnieuw.", "error")
+        return redirect(url_for("main.index"))
+    demo_throttle.register_failure(key, DEMO_THROTTLE_WINDOW)
+
+    purge_demo_users(force=True)
+    user = create_demo_user()
+    logout_user()
+    session.clear()
+    login_user(user)
+    flash("Welkom in de demo! Dit account bestaat tijdelijk en bevat voorbeeldgegevens.", "success")
+    return redirect(url_for("main.dashboard"))
+
+
 @auth_bp.route("/wachtwoord-vergeten", methods=["GET", "POST"])
 def forgot_password():
     if current_user.is_authenticated:
         return redirect(url_for("main.dashboard"))
+    if is_demo_mode():
+        flash("Wachtwoordherstel is uitgeschakeld in de demo.", "info")
+        return redirect(url_for("main.index"))
 
     if request.method == "POST":
         email = _normalize_email(request.form.get("email", ""))

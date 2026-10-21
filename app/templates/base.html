@@ -17,6 +17,11 @@
   {% block head %}{% endblock %}
 </head>
 <body>
+  {% if demo_mode %}
+  <div class="demo-banner" role="note">
+    Dit is een <strong>demo</strong> met voorbeeldgegevens. Vul geen echte gegevens in: demo-accounts worden na {{ demo_ttl_hours }} uur automatisch verwijderd.
+  </div>
+  {% endif %}
   {% if current_user.is_authenticated %}
   <nav class="nav">
     <a href="{{ url_for('main.dashboard') }}" class="nav-brand">

@@ -4,7 +4,7 @@
 {% block content %}
 <article class="prose-page">
   <h1>Privacyverklaring</h1>
-  <p class="subtitle">Laatst bijgewerkt: juli 2026</p>
+  <p class="subtitle">Laatst bijgewerkt: oktober 2026</p>
 
   <p>
     {{ site_name }} is een hulpmiddel om alcoholgebruik bij te houden.
@@ -29,9 +29,11 @@
 
   <h2>Bewaartermijn</h2>
   <p>
-    Gegevens blijven bewaard zolang je account actief is. Je kunt je accountgegevens
-    via het profiel bijwerken. Voor volledige verwijdering kun je contact opnemen via
-    <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.
+    Gegevens blijven bewaard zolang je account bestaat. Verwijder je je account
+    (via <em>Profiel → Account verwijderen</em>), dan worden je account en al je gegevens
+    direct en definitief uit de database gewist. Er blijft geen kopie in de app achter;
+    alleen versleutelde back-ups van de beheerder kunnen nog tijdelijk een kopie bevatten
+    tot die volgens het back-upschema worden overschreven.
   </p>
 
   <h2>Beveiliging</h2>
@@ -52,8 +54,17 @@
 
   <h2>Jouw rechten</h2>
   <p>
-    Onder de AVG kun je inzage, correctie of verwijdering van je gegevens vragen.
-    Mail daarvoor naar <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.
+    Onder de AVG heb je recht op inzage, correctie, verwijdering en overdraagbaarheid
+    van je gegevens. Dat kun je grotendeels zelf regelen, zonder ons te mailen:
+  </p>
+  <ul>
+    <li><strong>Inzage en overdraagbaarheid:</strong> download via <em>Profiel → Je gegevens</em> al je gegevens als JSON-bestand, of je registraties als CSV voor Excel.</li>
+    <li><strong>Correctie:</strong> pas je profiel, registraties, doelen en dagboek aan in de app.</li>
+    <li><strong>Verwijdering:</strong> verwijder je account via <em>Profiel → Account verwijderen</em>.</li>
+  </ul>
+  <p>
+    Voor andere verzoeken of vragen kun je mailen naar
+    <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.
   </p>
 
   <h2>Contact</h2>

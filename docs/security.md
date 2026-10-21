@@ -18,9 +18,12 @@ Overzicht van de maatregelen in de code. Een kwetsbaarheid gevonden? Zie [SECURI
 | Gegevensisolatie | Alle queries filteren op `user_id` van de ingelogde gebruiker | routes en services |
 | Invoer | Datum-, aantal-, doel- en profielvelden worden gevalideerd; requests max. 1 MB | routes, `MAX_CONTENT_LENGTH` |
 | Configuratie | App start niet buiten development zonder eigen `SECRET_KEY` | `app/__init__.py` |
+| Eigen gegevens | Gebruikers downloaden al hun gegevens (JSON, en registraties als CSV met bescherming tegen formule-injectie). Wachtwoordhash en passkey-sleutels zitten niet in de export | `app/services/account_service.py` |
+| Account verwijderen | Alleen na wachtwoord en bevestiging, met dezelfde rem als inloggen. Verwijdert alle rijen in één transactie en stuurt `Clear-Site-Data` mee zodat de browser lokale kopieën wist | `app/blueprints/main/account.py` |
+| Lokale opslag | De service worker bewaart geen pagina's met `Cache-Control: no-store`, dus geen persoonlijke gegevens op het apparaat; offline verschijnt een statische pagina | `app/static/sw.js` |
+| Demo-modus | Geen eigen registratie, tijdelijke accounts die automatisch verdwijnen, en de app weigert demo-modus op een database met echte accounts | `app/services/demo_service.py`, [demo.md](demo.md) |
 
 ## Bekende beperkingen
 
 - De inlog-rem is in-memory en per proces; zie [deployment.md](deployment.md).
-- Er is nog geen functie waarmee gebruikers zelf hun account en gegevens kunnen verwijderen of exporteren; dit gaat nu via het contactadres.
 - `style-src` staat `'unsafe-inline'` toe omdat enkele templates en Quill inline styles gebruiken.

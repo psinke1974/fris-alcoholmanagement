@@ -885,3 +885,24 @@ button.nav-logout { background: none; border: 0; padding: 0; font: inherit; curs
   margin-top: 0.5rem;
 }
 
+
+/* Eigen gegevens en account verwijderen */
+.data-card .form-actions { margin-top: 0.75rem; }
+.data-card .btn { margin-top: 0; }
+.danger-card { border: 1px solid #f3c4bc; }
+.danger-card h2 { color: #8b2518; }
+.danger-card p { margin-bottom: 0.75rem; }
+.checkbox-label { display: flex; gap: 0.5rem; align-items: flex-start; font-weight: normal; margin: 0.75rem 0; }
+.checkbox-label input { width: auto; margin-top: 0.3rem; }
+.btn-delete { background: var(--warning); color: white; }
+.btn-delete:hover { background: #b93f2d; }
+
+/* Demo-modus */
+.demo-banner {
+  background: #fff4dc;
+  color: #6b4a00;
+  border-bottom: 1px solid #f0d9a0;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}

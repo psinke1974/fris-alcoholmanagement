@@ -64,6 +64,14 @@ class Config:
     # Richtlijn: max 14 eenheden/week (mannen), 7 (vrouwen) — Trimbos/RIVM
     DEFAULT_WEEKLY_LIMIT = 14
 
+    # Demo-modus voor een openbare demo-omgeving: geen eigen accounts, alleen tijdelijke
+    # demo-accounts met voorbeeldgegevens die na DEMO_ACCOUNT_TTL_HOURS worden verwijderd.
+    # Nooit aanzetten op een installatie met echte gebruikers.
+    DEMO_MODE = _env_bool("DEMO_MODE", False)
+    DEMO_ACCOUNT_TTL_HOURS = int(os.environ.get("DEMO_ACCOUNT_TTL_HOURS", "4"))
+    DEMO_MAX_ACCOUNTS = int(os.environ.get("DEMO_MAX_ACCOUNTS", "200"))
+    DEMO_MAX_PER_IP_PER_HOUR = int(os.environ.get("DEMO_MAX_PER_IP_PER_HOUR", "10"))
+
     # E-mail (optioneel — zonder SMTP worden mails naar de log geschreven)
     MAIL_SERVER = os.environ.get("MAIL_SERVER")
     MAIL_PORT = int(os.environ.get("MAIL_PORT", "587"))

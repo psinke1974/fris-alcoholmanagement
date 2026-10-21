@@ -66,9 +66,19 @@
   </div>
 </div>
 
+<div class="card data-card">
+  <h2>Je gegevens</h2>
+  <p class="subtitle">Download alles wat {{ site_name }} over je bewaart, of verwijder je account met al je gegevens.</p>
+  <div class="form-actions">
+    <a href="{{ url_for('main.export_json') }}" class="btn btn-secondary">Alles downloaden (JSON)</a>
+    <a href="{{ url_for('main.export_csv') }}" class="btn btn-secondary">Registraties downloaden (CSV)</a>
+    <a href="{{ url_for('main.delete_account') }}" class="btn btn-ghost btn-danger">Account verwijderen</a>
+  </div>
+</div>
+
 <div class="card info-card">
   <h2>Privacy</h2>
-  <p>Je gegevens worden lokaal opgeslagen in een beveiligde database. Wachtwoorden worden gehasht en nooit leesbaar opgeslagen. Profielgegevens worden alleen gebruikt voor gepersonaliseerde tips — ze worden niet gedeeld met derden.</p>
+  <p>Je gegevens worden opgeslagen in een beveiligde database. Wachtwoorden worden gehasht en nooit leesbaar opgeslagen. Profielgegevens worden alleen gebruikt voor gepersonaliseerde tips — ze worden niet gedeeld met derden. Zie de <a href="{{ url_for('main.privacy') }}">privacyverklaring</a>.</p>
 </div>
 {% endblock %}
 
